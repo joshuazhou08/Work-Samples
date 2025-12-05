@@ -1,0 +1,1 @@
+export { EditStudentForm } from "./EditStudentForm";

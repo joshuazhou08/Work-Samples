@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      @page {
+        size: A4;
+        margin: 0;
+      }
+      body {
+        font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+        background: #f5f7fb;
+        margin: 0;
+        padding: 40px 0;
+        color: #1f2933;
+      }
+      .invoice-wrapper {
+        max-width: 720px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+        border: 1px solid #e2e8f0;
+      }
+      .invoice-header {
+        padding: 32px;
+        background: linear-gradient(135deg, #0f172a, #1d4ed8);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .brand img {
+        height: 48px;
+      }
+      .brand h1 {
+        margin: 0;
+        font-size: 26px;
+        letter-spacing: 0.02em;
+      }
+      .invoice-meta {
+        text-align: right;
+      }
+      .invoice-meta p {
+        margin: 2px 0;
+        font-size: 14px;
+        opacity: 0.9;
+      }
+      .content {
+        padding: 32px;
+      }
+      .client-block {
+        margin-bottom: 24px;
+      }
+      .client-block h2 {
+        font-size: 18px;
+        margin-bottom: 8px;
+        color: #0f172a;
+      }
+      .client-block p {
+        margin: 0 0 4px;
+        font-size: 14px;
+      }
+      .intro {
+        font-size: 14px;
+        color: #2d333b;
+        margin-bottom: 28px;
+        line-height: 1.6;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      thead th {
+        background: #f1f5f9;
+        color: #0f172a;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 14px 12px;
+        text-align: left;
+      }
+      tbody td {
+        padding: 16px 12px;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 14px;
+        vertical-align: top;
+        line-height: 1.5;
+        white-space: pre-line;
+      }
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+      .summary {
+        margin-top: 32px;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 20px;
+      }
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        margin-bottom: 8px;
+        color: #334155;
+      }
+      .summary-row.total {
+        font-size: 18px;
+        font-weight: 700;
+        color: #0f172a;
+        margin-top: 12px;
+      }
+      .footer {
+        margin-top: 40px;
+        font-size: 12px;
+        color: #94a3b8;
+        text-align: center;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="invoice-wrapper">
+      <div class="invoice-header">
+        <div class="brand">
+          <img src="{{ invoice.logo_url }}" alt="CalTutors logo">
+          <h1>CalTutors Invoice</h1>
+        </div>
+        <div class="invoice-meta">
+          <p><strong>Invoice #</strong> {{ invoice.number }}</p>
+          <p><strong>Date</strong> {{ invoice.date }}</p>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="client-block">
+          <h2>Billing To</h2>
+          <p><strong>{{ invoice.customer_name }}</strong></p>
+          <p class="text-gray-500 text-sm">Timezone: {{ invoice.timezone_label }}</p>
+        </div>
+
+        <p class="intro">
+          Thank you for doing business with CalTutors. Here is an invoice of your most recent payment. If you have any questions, feel free to reach out to our team anytime by replying.
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Time</th>
+              <th>Hours</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in invoice.items %}
+            <tr>
+              <td>{{ item.description }}</td>
+              <td>{{ item.time }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>${{ item.price }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="summary">
+          {% if invoice.has_sessions %}
+          <div class="summary-row">
+            <span>Sessions Subtotal</span>
+            <span>${{ invoice.sessions_subtotal }}</span>
+          </div>
+          {% endif %}
+          {% if invoice.has_credits %}
+          <div class="summary-row">
+            <span>Credits Applied</span>
+            <span>-${{ invoice.credits_applied }}</span>
+          </div>
+          {% endif %}
+          <div class="summary-row total">
+            <span>Total Due</span>
+            <span>${{ invoice.amount }}</span>
+          </div>
+        </div>
+
+        <div class="footer">
+          CalTutors • https://caltutors.org<br>
+          Thank you for trusting us with your student's success.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

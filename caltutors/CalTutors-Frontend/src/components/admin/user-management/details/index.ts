@@ -1,0 +1,1 @@
+export { UserDetailHeader } from "./UserDetailHeader";
